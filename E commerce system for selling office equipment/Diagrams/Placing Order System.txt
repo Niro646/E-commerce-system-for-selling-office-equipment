@@ -1,0 +1,82 @@
+title Placing Order System
+
+actor Customer
+
+//participant Home page
+//participant Stock
+
+participant Items Catalog
+participant Shoping Cart
+participant Checkout Flow
+
+database DB
+
+participant Payment Provider
+
+Customer->Items Catalog:Browse Items
+activate Items Catalog
+note over Items Catalog:Customer select a product
+Items Catalog->DB:Product Availability Query
+
+activate DB
+DB-->Items Catalog:Quantity
+
+deactivate DB
+
+alt Not In Stock
+note over Items Catalog:Add To Cart Button (Not Available)
+
+
+else In Stock
+note over Items Catalog:Add To Cart Button (Available)
+Customer->Items Catalog:"Add Product to Cart" Button
+Items Catalog->Shoping Cart:Add Product To The Shoping Cart
+deactivate Items Catalog
+activate Shoping Cart
+note over Shoping Cart:Customer Can Change Quantity, Remove Product, Add coupons
+Shoping Cart->Checkout Flow:On Checkout
+deactivate Shoping Cart
+
+activate Checkout Flow
+Checkout Flow->DB:Hold Product For Checkout
+activate DB
+note over DB:DB Holds Product For 10 Min
+DB-->Checkout Flow:"Command Successfully Executed"
+deactivate DB
+
+Customer->Checkout Flow:Add Customer Information
+Customer->Checkout Flow:Add Delivery Information
+Customer->Checkout Flow:Add Payment Information
+Customer->Checkout Flow:Place An Order
+Checkout Flow->Payment Provider:Send Payment Information
+
+activate Payment Provider
+deactivate Checkout Flow
+
+alt Payment Unsuccessful
+Payment Provider-->Checkout Flow:Invalid Payment Information
+activate Checkout Flow
+Checkout Flow-->Customer:Clear Payment Information
+Checkout Flow-->Customer:Invalid Payment Information (message)
+deactivate Checkout Flow
+
+else Payment Successful
+Payment Provider-->Checkout Flow:Valid Payment
+
+deactivate Payment Provider
+
+activate Checkout Flow
+Checkout Flow->DB:Update quantity
+activate DB
+Checkout Flow->DB:Save Customer order details
+deactivate Checkout Flow
+note over DB:Order created in DB
+DB-->Checkout Flow:"Command Successfully Executed"
+activate Checkout Flow
+deactivate DB
+
+Checkout Flow-->Customer:"Order Confirmation With Recipt"
+deactivate Checkout Flow
+
+end
+end

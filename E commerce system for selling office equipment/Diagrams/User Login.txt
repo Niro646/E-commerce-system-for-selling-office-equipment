@@ -1,0 +1,50 @@
+title User Login
+
+actor User
+
+participant Login page
+//participant User
+
+participant user
+database Database
+
+
+activate User
+database Database
+
+activate Login page
+
+User->Login page:Visit
+User->Login page:Enter Username & Password
+User->Login page:Click On Login
+deactivate User
+
+Login page->user:Send Login Information
+activate user
+deactivate Login page
+user->Database:Validate User Data
+
+activate Database
+Database-->user:Valid/Invalid
+deactivate Database
+
+
+
+
+
+alt Correct Login Data
+user-->Login page:User Login Accepted
+activate Login page
+Login page->Login page:Redirected To The Target Page
+Login page-->User:Successful Login (message)
+deactivate Login page
+
+else Incorrect Login Data
+user-->Login page:User Login Rejected
+
+deactivate user
+activate Login page
+Login page-->User:Clear The Password Box And Infrom About Unaccepted Email/Password Combination
+deactivate Login page
+
+end

@@ -1,0 +1,29 @@
+title Add Product To Catalog
+
+actor Workers
+
+participant Product Panel
+database DB
+
+activate Product Panel
+Workers->Product Panel:Add Product
+
+activate DB
+
+note over Product Panel:Set Product Information
+Workers->Product Panel:Set Product Name
+Workers->Product Panel:Set Product Description
+Workers->Product Panel:Set Product Pics
+Workers->Product Panel:Set Product Price
+Workers->Product Panel:Set Proudct Quantity
+
+Product Panel->DB:Save Proudct Information
+
+note over DB:Product Details Added To The DB
+Product Panel<--DB:"Command Successfully Executed"
+
+deactivate DB
+
+Workers<--Product Panel:Product has been added successfully
+
+deactivate Product Panel
